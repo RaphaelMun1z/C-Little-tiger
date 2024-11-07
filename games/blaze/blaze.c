@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "../../db/db.h"
 
 #define LINES 7
 #define COLUMNS 100
@@ -183,17 +184,30 @@ void BlazeGenSelect(double money, char color)
 void BlazePrepareMatch()
 {
     double value;
-    printf("Qual valor deseja aposta? ");
-    fflush(stdout);
-    scanf("%lf", &value);
+    do
+    {
+        printf("Qual valor deseja aposta? ");
+        fflush(stdout);
+        scanf("%lf", &value);
+
+        if (value <= 0)
+            printf("Valor inválido!\n");
+
+    } while (value <= 0);
 
     int color;
-    printf("Qual cor? \n");
-    printf("[0] - Vermelho\n");
-    printf("[1] - Azul\n");
-    printf("[2] - Branco\n");
-    fflush(stdout);
-    scanf("%d", &color);
+    do
+    {
+        printf("Qual cor? \n");
+        printf("[0] - Vermelho\n");
+        printf("[1] - Azul\n");
+        printf("[2] - Branco\n");
+        fflush(stdout);
+        scanf("%d", &color);
+
+        if (color != 0 && color != 1 && color != 2)
+            printf("Cor inválida!\n");
+    } while (color != 0 && color != 1 && color != 2);
 
     BlazeGenSelect(value, color);
 

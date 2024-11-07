@@ -70,15 +70,38 @@ int main()
                 switch (opt)
                 {
                 case 1:
-                    playBombs();
+                    if (players[authenticatedUser].balance <= 0)
+                    {
+                        printf("Saldo insuficiente!\n");
+                        return;
+                    }
+                    else
+                    {
+                        playBombs();
+                    }
                     break;
 
                 case 2:
-                    playBlaze();
+                    if (players[authenticatedUser].balance <= 0)
+                    {
+                        printf("Saldo insuficiente!\n");
+                    }
+                    else
+                    {
+                        playBlaze();
+                    }
                     break;
 
                 case 3:
-                    playRoulette();
+                    if (players[authenticatedUser].balance <= 0)
+                    {
+                        printf("Saldo insuficiente!\n");
+                    }
+                    else
+                    {
+                        playRoulette();
+                    }
+
                     break;
 
                 default:
