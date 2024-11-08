@@ -6,7 +6,8 @@ typedef struct
     int code;
     char name[50];
     double balance;
-    char category;
+    char sexo;
+    int accessLevel;
     char email[50];
     char password[50];
 } player;

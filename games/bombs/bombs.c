@@ -1,22 +1,24 @@
-#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+#include "../../db/db.h"
 
 #define LINES 21
 #define COLUMNS 100
 char matriz[LINES][COLUMNS][3];
 int posFields[16][3];
 int openedFields[16];
+double moneyBegin, moneyAmount = 0;
 int gameover = 0;
+int points = 0;
+int matchResult = -1;
+int qntBombas = 0;
 
 void chargeValue(double value, int playerCode);
+void addValue(double value, int playerCode);
 
-void setColor(int textColor, int backgroundColor)
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, textColor + (backgroundColor * 16));
-}
+void setColor(int textColor, int backgroundColor);
 
 void prepMap()
 {
@@ -148,6 +150,22 @@ void showGame()
 
 void showGameResult()
 {
+    if (matchResult == 1)
+    {
+        setColor(2, 0);
+        printf("%d Acertos. \n", points);
+        printf("Você ganhou R$%.lf. \n", moneyAmount);
+        addValue(points * 10.00, 0);
+        setColor(8, 0);
+    }
+    else if (matchResult == 0)
+    {
+        setColor(4, 0);
+        printf("Você perdeu R$%.lf. \n", moneyBegin);
+        chargeValue(moneyBegin, authenticatedUser);
+        setColor(8, 0);
+    }
+
     int x = 1;
     int y = 1;
     int aux = 0;
@@ -207,15 +225,15 @@ void openField(int ind)
     {
         strcpy(matriz[posFields[ind - 1][0] + 2][posFields[ind - 1][1] + 4], "💣");
         gameover = 1;
-        setColor(4, 0);
-        printf("--> VOCÊ PERDEU!\n");
-        setColor(8, 0);
-        chargeValue(10.0, 0);
+        matchResult = 0;
         return;
     }
     else
     {
         strcpy(matriz[posFields[ind - 1][0] + 2][posFields[ind - 1][1] + 4], "💰");
+        points++;
+        matchResult = 1;
+        moneyAmount += ((qntBombas*6.25)/100) * moneyAmount;
         return;
     }
 
@@ -224,7 +242,8 @@ void openField(int ind)
 
 int askCard()
 {
-    printf("Qual card gostaria de abrir? \n");
+    printf("Valendo: R$%.lf\n", ((qntBombas*6.25)/100) * moneyAmount);
+    printf("Qual card gostaria de abrir? Para SAIR digite -1. \n");
     int aux = 1;
     setColor(2, 0);
     for (int ii = 1; ii <= 4; ii++)
@@ -245,15 +264,23 @@ int askCard()
 
 void playBombs()
 {
+    qntBombas = 0;
+    gameover = 0;
+    points = 0;
+    matchResult = -1;
+
     printf("\n===================================| BOMBS |===================================\n");
     setColor(8, 0);
     system("cls");
 
     prepMap();
 
-    int qntBombas = bombAmount();
+    qntBombas = bombAmount();
     genBomb(qntBombas);
     setColor(6, 0);
+    printf("Qual o valor da aposta? ");
+    scanf("%lf", &moneyBegin);
+    moneyAmount = moneyBegin;
     printf("Quantidade de bombas: %d", qntBombas);
     setColor(8, 0);
 
@@ -265,11 +292,19 @@ void playBombs()
     {
         system("\n");
         opt = askCard();
-        setColor(6, 0);
-        printf("--> Você escolheu o card %d. \n", opt);
-        setColor(8, 0);
-        openField(opt);
-        showGame();
+        if (opt == -1)
+        {
+            matchResult = 1;
+            printf("--> Partida finalizada!\n");
+        }
+        else
+        {
+            setColor(6, 0);
+            printf("--> Você escolheu o card %d. \n", opt);
+            setColor(8, 0);
+            openField(opt);
+            showGame();
+        }
     }
 
     showGameResult();

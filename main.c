@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -10,6 +11,14 @@
 #include "games/blaze/blaze.h"
 #include "games/roulette/roulette.h"
 
+void setColor(int textColor, int backgroundColor)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, textColor + (backgroundColor * 16));
+}
+
+void withdrawMoney();
+
 int main()
 {
     int opt;
@@ -18,8 +27,9 @@ int main()
 
     do
     {
+        setColor(7, 0);
         showHomeMenu(authenticatedUser);
-        printf("Enter the option: ");
+        printf("Opção: ");
         fflush(stdout);
         scanf("%d", &opt);
         printf("\n");
@@ -33,7 +43,9 @@ int main()
             }
             else
             {
-                printf("❌ Você não está autenticado!\n");
+                setColor(4, 0);
+                printf("❌ Você já está autenticado!\n");
+                setColor(7, 0);
             }
             break;
 
@@ -44,7 +56,9 @@ int main()
             }
             else
             {
-                printf("❌ Você não está autenticado!\n");
+                setColor(4, 0);
+                printf("❌ Você já está autenticado!\n");
+                setColor(7, 0);
             }
             break;
 
@@ -55,7 +69,9 @@ int main()
             }
             else
             {
+                setColor(4, 0);
                 printf("❌ Você não está autenticado!\n");
+                setColor(7, 0);
             }
             break;
 
@@ -63,7 +79,7 @@ int main()
             if (authenticatedUser != -1)
             {
                 showGamesMenu();
-                printf("Enter the game: ");
+                printf("Escolha o jogo: ");
                 fflush(stdout);
                 scanf("%d", &opt);
 
@@ -72,8 +88,9 @@ int main()
                 case 1:
                     if (players[authenticatedUser].balance <= 0)
                     {
+                        setColor(4, 0);
                         printf("Saldo insuficiente!\n");
-                        return;
+                        setColor(7, 0);
                     }
                     else
                     {
@@ -84,7 +101,9 @@ int main()
                 case 2:
                     if (players[authenticatedUser].balance <= 0)
                     {
+                        setColor(4, 0);
                         printf("Saldo insuficiente!\n");
+                        setColor(7, 0);
                     }
                     else
                     {
@@ -95,7 +114,9 @@ int main()
                 case 3:
                     if (players[authenticatedUser].balance <= 0)
                     {
+                        setColor(4, 0);
                         printf("Saldo insuficiente!\n");
+                        setColor(7, 0);
                     }
                     else
                     {
@@ -105,14 +126,18 @@ int main()
                     break;
 
                 default:
-                    printf("⚠️ Opção inválida!\n");
+                    setColor(6, 0);
+                    printf("⚠️  Opção inválida!\n");
+                    setColor(7, 0);
                     break;
                 }
                 printf("\n");
             }
             else
             {
+                setColor(4, 0);
                 printf("❌ Você não está autenticado!\n");
+                setColor(7, 0);
             }
             break;
 
@@ -123,32 +148,67 @@ int main()
             }
             else
             {
+                setColor(4, 0);
                 printf("❌ Você não está autenticado!\n");
+                setColor(7, 0);
             }
             break;
 
         case 6:
             if (authenticatedUser != -1)
             {
-                printf("Saindo da conta...\n");
-                logoutAccount();
+                withdrawMoney();
             }
             else
             {
+                setColor(4, 0);
                 printf("❌ Você não está autenticado!\n");
+                setColor(7, 0);
             }
             break;
 
         case 7:
+            if (authenticatedUser != -1 && players[authenticatedUser].accessLevel == 1)
+            {
+                getAllUsersDetails();
+            }
+            else
+            {
+                setColor(4, 0);
+                printf("❌ Você não tem acesso a essa função!\n");
+                setColor(7, 0);
+            }
+            break;
+
+        case 8:
+            if (authenticatedUser != -1)
+            {
+                setColor(8, 0);
+                printf("Saindo da conta...\n");
+                setColor(7, 0);
+                logoutAccount();
+            }
+            else
+            {
+                setColor(4, 0);
+                printf("❌ Você não está autenticado!\n");
+                setColor(7, 0);
+            }
+            break;
+
+        case 9:
+            setColor(8, 0);
             printf("Saindo...\n");
+            setColor(7, 0);
             break;
 
         default:
-            printf("⚠️ Opção inválida!\n");
+            setColor(6, 0);
+            printf("⚠️  Opção inválida!\n");
+            setColor(7, 0);
             break;
         }
-
-    } while (opt != 7);
+    } while (opt != 9);
 
     return 0;
 }

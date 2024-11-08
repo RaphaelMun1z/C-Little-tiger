@@ -7,6 +7,8 @@
         "auth.h": "c",
         "bombs.h": "c",
         "blaze.h": "c",
-        "roulette.h": "c"
+        "roulette.h": "c",
+        "structs.h": "c",
+        "typeinfo": "c"
     }
 }
