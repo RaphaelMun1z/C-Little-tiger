@@ -57,7 +57,7 @@ void getByIdUserDetails(int code)
             }
             else
             {
-                for (int jj = 0; jj < players[jj].matchesFinished; jj++)
+                for (int jj = 0; jj < players[ii].matchesFinished; jj++)
                 {
                     printf("Jogo: %s\n", players[ii].history[jj].game);
                     printf("Resultado: R$%.2lf\n", players[ii].history[jj].result);

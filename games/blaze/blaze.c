@@ -56,7 +56,7 @@ void BlazeGenSquareInMap(int x, int ind)
 
     if (ind == 4)
     {
-        strcpy(matriz[3][x + 4], " +");
+        strcpy(matriz[3][x + 4], "50");
     }
 }
 
@@ -77,6 +77,7 @@ void BlazeGenSquaresValues(int qntCards)
     }
 
     squares[4][1] = 7;
+    squares[4][0] = 50;
 }
 
 void BlazeGenMap(int qntSquares)
@@ -184,7 +185,6 @@ void BlazeGenSelect(double money, char color)
 
     int indHistory = players[authenticatedUser].matchesFinished;
     players[authenticatedUser].matchesFinished++;
-    printf("teste %d\n", players[authenticatedUser].matchesFinished);
 
     time_t now;
     now = time(NULL);
