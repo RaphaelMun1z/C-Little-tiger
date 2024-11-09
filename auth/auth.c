@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "../structs.h"
 #include "../db/db.h"
 #include "auth.h"
@@ -52,14 +53,50 @@ void login()
     }
 }
 
+int validEmail(char email[], int length)
+{
+    if (length <= 1)
+        return 0;
+
+    for (int ii = 0; ii < length; ii++)
+    {
+        if (email[ii] == '@')
+            return 1;
+    }
+    return 0;
+}
+
+int validName(char name[], int length)
+{
+    if (length <= 1)
+        return 0;
+
+    for (int ii = 0; ii < length; ii++)
+    {
+        if (!isalpha(name[ii]))
+            return 0;
+    }
+    return 1;
+}
+
 void registerPlayer()
 {
     char name[50];
     printf("========================| REGISTRO |========================\n");
-    printf("Informe seu nome: ");
-    getchar();
-    fgets(name, sizeof(name), stdin);
-    name[strcspn(name, "\n")] = 0;
+    getc(stdin);
+    do
+    {
+        printf("Informe seu nome: ");
+        fgets(name, sizeof(name), stdin);
+        name[strcspn(name, "\n")] = 0;
+
+        if (validName(name, strlen(name)) == 0)
+        {
+            setColor(6, 0);
+            printf("⚠️  Nome inválido!\n");
+            setColor(7, 0);
+        }
+    } while (validName(name, strlen(name)) == 0);
     strcpy(players[contPlayers].name, name);
 
     char email[50];
@@ -67,16 +104,21 @@ void registerPlayer()
     {
         printf("Informe seu e-mail: ");
         fgets(email, sizeof(email), stdin);
+        email[strcspn(email, "\n")] = 0;
 
-        if (existUserByEmail(email) != -1)
+        if (validEmail(email, strlen(email)) == 0)
+        {
+            setColor(6, 0);
+            printf("⚠️  E-mail inválido!\n\n");
+            setColor(7, 0);
+        }
+        else if (existUserByEmail(email) != -1)
         {
             setColor(6, 0);
             printf("⚠️  E-mail em uso!\n\n");
             setColor(7, 0);
         }
-    } while (existUserByEmail(email) != -1);
-
-    email[strcspn(email, "\n")] = 0;
+    } while (validEmail(email, sizeof(email)) == 0 || existUserByEmail(email) != -1);
     strcpy(players[contPlayers].email, email);
 
     char optSexo;
@@ -84,16 +126,17 @@ void registerPlayer()
     {
         printf("Informe seu sexo (M/F): ");
         scanf("%c", &optSexo);
+        getc(stdin);
 
-        if (optSexo != 'M' && optSexo != 'F')
+        if (toupper(optSexo) != 'M' && toupper(optSexo) != 'F')
         {
             setColor(6, 0);
             printf("⚠️  Opção inválida!\n\n");
             setColor(7, 0);
         }
-    } while (optSexo != 'M' && optSexo != 'F');
+    } while (toupper(optSexo) != 'M' && toupper(optSexo) != 'F');
 
-    players[contPlayers].sexo = optSexo;
+    players[contPlayers].sexo = toupper(optSexo);
 
     char pass[50], confPass[50];
     do

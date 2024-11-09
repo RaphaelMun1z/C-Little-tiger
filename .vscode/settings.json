@@ -9,6 +9,8 @@
         "blaze.h": "c",
         "roulette.h": "c",
         "structs.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "type_traits": "c",
+        "time.h": "c"
     }
 }

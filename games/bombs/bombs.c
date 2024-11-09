@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <ctype.h>
 #include "../../db/db.h"
 
 #define LINES 21
@@ -71,8 +72,16 @@ int haBomba(int x, int y)
 int bombAmount()
 {
     int qntBombas;
-    printf("Quantidade de bombas: (1-15)? ");
-    scanf("%d", &qntBombas);
+    do
+    {
+        printf("Quantidade de bombas: (1-15)? ");
+        scanf("%d", &qntBombas);
+
+        if (qntBombas < 1 || qntBombas > 15)
+        {
+            printf("Quantidade de bombas inválida!\n");
+        }
+    } while (qntBombas < 1 || qntBombas > 15);
     return qntBombas;
 }
 
@@ -153,15 +162,15 @@ void showGameResult()
     if (matchResult == 1)
     {
         setColor(2, 0);
-        printf("%d Acertos. \n", points);
-        printf("Você ganhou R$%.lf. \n", moneyAmount);
-        addValue(points * 10.00, 0);
+        printf("\n%d Acertos. \n", points);
+        printf("Você ganhou R$%.2lf. \n", moneyAmount);
+        addValue(moneyAmount, 0);
         setColor(8, 0);
     }
     else if (matchResult == 0)
     {
         setColor(4, 0);
-        printf("Você perdeu R$%.lf. \n", moneyBegin);
+        printf("\nVocê perdeu R$%.2lf. \n", moneyBegin);
         chargeValue(moneyBegin, authenticatedUser);
         setColor(8, 0);
     }
@@ -233,7 +242,7 @@ void openField(int ind)
         strcpy(matriz[posFields[ind - 1][0] + 2][posFields[ind - 1][1] + 4], "💰");
         points++;
         matchResult = 1;
-        moneyAmount += ((qntBombas*6.25)/100) * moneyAmount;
+        moneyAmount += ((qntBombas * 6.25) / 100) * moneyAmount;
         return;
     }
 
@@ -242,7 +251,10 @@ void openField(int ind)
 
 int askCard()
 {
-    printf("Valendo: R$%.lf\n", ((qntBombas*6.25)/100) * moneyAmount);
+    double exAmount = moneyAmount + (((qntBombas * 6.25) / 100) * moneyAmount);
+    setColor(6, 0);
+    printf("Ao acertar, você acumulará: R$%.2lf\n", exAmount);
+    setColor(7, 0);
     printf("Qual card gostaria de abrir? Para SAIR digite -1. \n");
     int aux = 1;
     setColor(2, 0);
@@ -270,16 +282,36 @@ void playBombs()
     matchResult = -1;
 
     printf("\n===================================| BOMBS |===================================\n");
-    setColor(8, 0);
+    setColor(7, 0);
     system("cls");
 
     prepMap();
 
     qntBombas = bombAmount();
     genBomb(qntBombas);
+
     setColor(6, 0);
-    printf("Qual o valor da aposta? ");
-    scanf("%lf", &moneyBegin);
+    do
+    {
+        printf("Qual o valor da aposta? Digite -1 para sair. ");
+        scanf("%lf", &moneyBegin);
+
+        if (moneyBegin == -1)
+            return;
+
+        if (moneyBegin < 20)
+        {
+            setColor(6, 0);
+            printf("⚠️  Valor mínimo de aposta R$20,00!\n");
+            setColor(7, 0);
+        }
+        else if (moneyBegin > players[authenticatedUser].balance)
+        {
+            setColor(6, 0);
+            printf("⚠️  Você não tem saldo suficiente!\n");
+            setColor(7, 0);
+        }
+    } while (moneyBegin < 20 || moneyBegin > players[authenticatedUser].balance);
     moneyAmount = moneyBegin;
     printf("Quantidade de bombas: %d", qntBombas);
     setColor(8, 0);
@@ -310,13 +342,23 @@ void playBombs()
     showGameResult();
 
     char optPlay;
-    printf("Deseja jogar novamente (S/N)? \n");
-    fflush(stdout);
-    scanf(" %c", &optPlay);
-    if (optPlay == 'S')
+    do
     {
+        printf("Deseja jogar novamente (S/N)? ");
+        fflush(stdout);
+        getchar();
+        scanf("%c", &optPlay);
+
+        if (toupper(optPlay) != 'S' && toupper(optPlay) != 'N')
+        {
+            setColor(6, 0);
+            printf("⚠️  Opção inválida!\n");
+            setColor(7, 0);
+        }
+    } while (toupper(optPlay) != 'S' && toupper(optPlay) != 'N');
+
+    if (toupper(optPlay) == 'S')
         playBombs();
-    }
 
     setColor(8, 0);
 }

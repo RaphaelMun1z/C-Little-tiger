@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h> 
+#include <unistd.h>
+#include <ctype.h>
+#include "../../db/db.h"
 
 const char *emojis[5] = {"🐜", "🍏", "🍎", "🌟", "🚀"};
 int result[3];
+double amountBet;
+
+void setColor(int textColor, int backgroundColor);
+void addValue(double value, int playerCode);
+void chargeValue(double value, int playerCode);
 
 void RoulettePrepPreMap()
 {
@@ -101,17 +108,46 @@ void RoulettePrepMap()
 void RouletteShowResult()
 {
     if (RouletteGetResult() == 1)
-        printf("\nVocê ganhou!\n");
+    {
+        setColor(2, 0);
+        printf("\nVocê ganhou R$%.2lf. \n", amountBet);
+        addValue(amountBet, authenticatedUser);
+        setColor(8, 0);
+    }
     else
-        printf("\nVocê perdeu!\n");
+    {
+        setColor(4, 0);
+        printf("\nVocê perdeu R$%.2lf. \n", amountBet);
+        chargeValue(amountBet, authenticatedUser);
+        setColor(8, 0);
+    }
 }
 
 void playRoulette()
 {
-    double value;
-    printf("Qual valor deseja aposta? ");
-    fflush(stdout);
-    scanf("%lf", &value);
+    do
+    {
+        setColor(6, 0);
+        printf("Qual o valor da aposta? Digite -1 para sair. ");
+        scanf("%lf", &amountBet);
+        setColor(7, 0);
+
+        if (amountBet == -1)
+            return;
+
+        if (amountBet < 20)
+        {
+            setColor(6, 0);
+            printf("⚠️  Valor mínimo de aposta R$20,00!\n");
+            setColor(7, 0);
+        }
+        else if (amountBet > players[authenticatedUser].balance)
+        {
+            setColor(6, 0);
+            printf("⚠️  Você não tem saldo suficiente!\n");
+            setColor(7, 0);
+        }
+    } while (amountBet < 20 || amountBet > players[authenticatedUser].balance);
 
     srand(time(NULL));
     RoulettePrepPreMap();
@@ -119,13 +155,21 @@ void playRoulette()
     RouletteShowResult();
 
     char opt;
-    printf("Deseja jogar novamente (S/N)? ");
-    fflush(stdout);
-    getchar();
-    scanf("%c", &opt);
-
-    if (opt == 'S')
+    do
     {
+        printf("Deseja jogar novamente (S/N)? ");
+        fflush(stdout);
+        getchar();
+        scanf("%c", &opt);
+
+        if (toupper(opt) != 'S' && toupper(opt) != 'N')
+        {
+            setColor(6, 0);
+            printf("⚠️  Opção inválida!\n");
+            setColor(7, 0);
+        }
+    } while (toupper(opt) != 'S' && toupper(opt) != 'N');
+
+    if (toupper(opt) == 'S')
         playRoulette();
-    }
 }

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 #include "../../db/db.h"
 
 #define LINES 7
@@ -10,11 +11,17 @@
 char matriz[LINES][COLUMNS][3];
 int gap = 11;
 int squares[9][2];
+double amountBet;
+int colorSelected;
 
 void setColor(int textColor, int backgroundColor);
+void addValue(double value, int playerCode);
+void chargeValue(double value, int playerCode);
 
 void BlazeCleanMap()
 {
+    colorSelected = -1;
+
     for (int ii = 0; ii < LINES; ii++)
     {
         for (int jj = 0; jj < COLUMNS; jj++)
@@ -159,11 +166,11 @@ void BlazeGenSelect(double money, char color)
         color = 7;
     }
 
-    int value = (rand() % 100) + 1;
-    while (value % 10 == 0)
+    int value;
+    do
     {
-        value = (rand() % 100) + 1;
-    }
+        value = rand() % 100;
+    } while (value % 11 == 1);
 
     int won = BlazeGetWon(value);
 
@@ -176,51 +183,89 @@ void BlazeGenSelect(double money, char color)
     }
 
     if (squares[won][1] == color)
-        printf("Você venceu a aposta!\n");
+    {
+        double money = amountBet * squares[won][0];
+        setColor(2, 0);
+        printf("\nVocê ganhou %d x %.2lf = R$%.2lf. \n", squares[won][0], amountBet, money);
+        addValue(money, authenticatedUser);
+        setColor(8, 0);
+    }
     else
-        printf("Você perdeu a aposta!\n");
+    {
+        setColor(4, 0);
+        printf("\nVocê perdeu R$%.2lf. \n", amountBet);
+        chargeValue(amountBet, authenticatedUser);
+        setColor(8, 0);
+    }
 }
 
 void BlazePrepareMatch()
 {
-    double value;
     do
     {
-        printf("Qual valor deseja aposta? ");
-        fflush(stdout);
-        scanf("%lf", &value);
+        setColor(6, 0);
+        printf("Qual o valor da aposta? Digite -1 para sair. ");
+        scanf("%lf", &amountBet);
+        setColor(7, 0);
 
-        if (value <= 0)
-            printf("Valor inválido!\n");
+        if (amountBet == -1)
+            return;
 
-    } while (value <= 0);
+        if (amountBet < 20)
+        {
+            setColor(6, 0);
+            printf("⚠️  Valor mínimo de aposta R$20,00!\n");
+            setColor(7, 0);
+        }
+        else if (amountBet > players[authenticatedUser].balance)
+        {
+            setColor(6, 0);
+            printf("⚠️  Você não tem saldo suficiente!\n");
+            setColor(7, 0);
+        }
+    } while (amountBet < 20 || amountBet > players[authenticatedUser].balance);
 
-    int color;
     do
     {
+        setColor(7, 0);
         printf("Qual cor? \n");
+        setColor(4, 0);
         printf("[0] - Vermelho\n");
+        setColor(1, 0);
         printf("[1] - Azul\n");
+        setColor(7, 0);
         printf("[2] - Branco\n");
         fflush(stdout);
-        scanf("%d", &color);
+        scanf("%d", &colorSelected);
 
-        if (color != 0 && color != 1 && color != 2)
-            printf("Cor inválida!\n");
-    } while (color != 0 && color != 1 && color != 2);
+        if (colorSelected != 0 && colorSelected != 1 && colorSelected != 2)
+        {
+            setColor(6, 0);
+            printf("⚠️  Cor inválida!\n");
+            setColor(7, 0);
+        }
+    } while (colorSelected != 0 && colorSelected != 1 && colorSelected != 2);
 
-    BlazeGenSelect(value, color);
+    BlazeGenSelect(amountBet, colorSelected);
 
     char opt;
-    printf("Deseja jogar novamente (S/N)? ");
-    fflush(stdout);
-    getchar();
-    scanf("%c", &opt);
-
-    if (opt == 'S')
+    do
     {
+        printf("Deseja jogar novamente (S/N)? ");
+        fflush(stdout);
+        getchar();
+        scanf("%c", &opt);
+
+        if (toupper(opt) != 'S' && toupper(opt) != 'N')
+        {
+            setColor(6, 0);
+            printf("⚠️  Opção inválida!\n");
+            setColor(7, 0);
+        }
+    } while (toupper(opt) != 'S' && toupper(opt) != 'N');
+
+    if (toupper(opt) == 'S')
         BlazePrepareMatch();
-    }
 }
 
 void playBlaze()

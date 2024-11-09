@@ -18,12 +18,15 @@ void setColor(int textColor, int backgroundColor)
 }
 
 void withdrawMoney();
+void deleteUser();
 
 int main()
 {
     int opt;
 
-    printf("====================| 🐯 LITTLE TIGER 🐯 |====================\n");
+    setColor(7, 6);
+    printf("                      🐯 LITTLE TIGER 🐯                      \n");
+    setColor(7, 0);
 
     do
     {
@@ -88,8 +91,8 @@ int main()
                 case 1:
                     if (players[authenticatedUser].balance <= 0)
                     {
-                        setColor(4, 0);
-                        printf("Saldo insuficiente!\n");
+                        setColor(6, 0);
+                        printf("⚠️  Saldo insuficiente!\n");
                         setColor(7, 0);
                     }
                     else
@@ -101,8 +104,8 @@ int main()
                 case 2:
                     if (players[authenticatedUser].balance <= 0)
                     {
-                        setColor(4, 0);
-                        printf("Saldo insuficiente!\n");
+                        setColor(6, 0);
+                        printf("⚠️  Saldo insuficiente!\n");
                         setColor(7, 0);
                     }
                     else
@@ -114,8 +117,8 @@ int main()
                 case 3:
                     if (players[authenticatedUser].balance <= 0)
                     {
-                        setColor(4, 0);
-                        printf("Saldo insuficiente!\n");
+                        setColor(6, 0);
+                        printf("⚠️  Saldo insuficiente!\n");
                         setColor(7, 0);
                     }
                     else
@@ -181,6 +184,28 @@ int main()
             break;
 
         case 8:
+            if (authenticatedUser != -1 && players[authenticatedUser].accessLevel == 1)
+            {
+                deleteUser();
+            }
+            else
+            {
+                setColor(4, 0);
+                printf("❌ Você não tem acesso a essa função!\n");
+                setColor(7, 0);
+            }
+            break;
+
+        case 9:
+        {
+            int userCode;
+            printf("Informe o código: ");
+            scanf("%d", &userCode);
+            getByIdUserDetails(userCode);
+            break;
+        }
+
+        case 10:
             if (authenticatedUser != -1)
             {
                 setColor(8, 0);
@@ -196,7 +221,7 @@ int main()
             }
             break;
 
-        case 9:
+        case 11:
             setColor(8, 0);
             printf("Saindo...\n");
             setColor(7, 0);
@@ -208,7 +233,7 @@ int main()
             setColor(7, 0);
             break;
         }
-    } while (opt != 9);
+    } while (opt != 11);
 
     return 0;
 }
