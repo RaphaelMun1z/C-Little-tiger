@@ -50,6 +50,21 @@ void getByIdUserDetails(int code)
                 printf("Nível de acesso: Jogador\n");
             }
             setColor(7, 0);
+            printf("\n___________________ HISTÓRICO DE PARTIDAS ___________________\n");
+            if (players[ii].matchesFinished == 0)
+            {
+                printf("Nenhuma partida realizada!\n");
+            }
+            else
+            {
+                for (int jj = 0; jj < players[jj].matchesFinished; jj++)
+                {
+                    printf("Jogo: %s\n", players[ii].history[jj].game);
+                    printf("Resultado: R$%.2lf\n", players[ii].history[jj].result);
+                    printf("Data: %s", players[ii].history[jj].date);
+                    printf("++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+                }
+            }
             printf("______________________________________________________________\n\n");
             return;
         }

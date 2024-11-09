@@ -182,6 +182,15 @@ void BlazeGenSelect(double money, char color)
         Sleep(1);
     }
 
+    int indHistory = players[authenticatedUser].matchesFinished;
+    players[authenticatedUser].matchesFinished++;
+    printf("teste %d\n", players[authenticatedUser].matchesFinished);
+
+    time_t now;
+    now = time(NULL);
+    strcpy(players[authenticatedUser].history[indHistory].game, "BLAZE");
+    strcpy(players[authenticatedUser].history[indHistory].date, ctime(&now));
+
     if (squares[won][1] == color)
     {
         double money = amountBet * squares[won][0];
@@ -189,6 +198,8 @@ void BlazeGenSelect(double money, char color)
         printf("\nVocê ganhou %d x %.2lf = R$%.2lf. \n", squares[won][0], amountBet, money);
         addValue(money, authenticatedUser);
         setColor(8, 0);
+
+        players[authenticatedUser].history[indHistory].result = money;
     }
     else
     {
@@ -196,6 +207,8 @@ void BlazeGenSelect(double money, char color)
         printf("\nVocê perdeu R$%.2lf. \n", amountBet);
         chargeValue(amountBet, authenticatedUser);
         setColor(8, 0);
+
+        players[authenticatedUser].history[indHistory].result = amountBet * -1;
     }
 }
 

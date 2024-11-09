@@ -109,7 +109,7 @@ void registerPlayer()
         if (validEmail(email, strlen(email)) == 0)
         {
             setColor(6, 0);
-            printf("⚠️  E-mail inválido!\n\n");
+            printf("⚠️  E-mail inválido!\n");
             setColor(7, 0);
         }
         else if (existUserByEmail(email) != -1)
@@ -156,13 +156,14 @@ void registerPlayer()
         else
         {
             setColor(6, 0);
-            printf("⚠️  Senhas não são iguais!\n\n");
+            printf("⚠️  Senhas não são iguais!\n");
             setColor(7, 0);
         }
     } while (strcmp(pass, confPass) != 0);
 
     players[contPlayers].code = contPlayers;
     players[contPlayers].balance = 0.0;
+    players[contPlayers].matchesFinished = 0;
 
     if (contPlayers == 0)
         players[contPlayers].accessLevel = 1;

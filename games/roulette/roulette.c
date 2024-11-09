@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
@@ -107,12 +108,22 @@ void RoulettePrepMap()
 
 void RouletteShowResult()
 {
+    int indHistory = players[authenticatedUser].matchesFinished;
+    players[authenticatedUser].matchesFinished++;
+
+    time_t now;
+    now = time(NULL);
+    strcpy(players[authenticatedUser].history[indHistory].game, "ROULETTE");
+    strcpy(players[authenticatedUser].history[indHistory].date, ctime(&now));
+
     if (RouletteGetResult() == 1)
     {
         setColor(2, 0);
         printf("\nVocê ganhou R$%.2lf. \n", amountBet);
         addValue(amountBet, authenticatedUser);
         setColor(8, 0);
+
+        players[authenticatedUser].history[indHistory].result = amountBet;
     }
     else
     {
@@ -120,6 +131,8 @@ void RouletteShowResult()
         printf("\nVocê perdeu R$%.2lf. \n", amountBet);
         chargeValue(amountBet, authenticatedUser);
         setColor(8, 0);
+
+        players[authenticatedUser].history[indHistory].result = amountBet * -1;
     }
 }
 

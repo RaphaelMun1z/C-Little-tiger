@@ -159,6 +159,14 @@ void showGame()
 
 void showGameResult()
 {
+    int indHistory = players[authenticatedUser].matchesFinished;
+    players[authenticatedUser].matchesFinished++;
+
+    time_t now;
+    now = time(NULL);
+    strcpy(players[authenticatedUser].history[indHistory].game, "BOMBS");
+    strcpy(players[authenticatedUser].history[indHistory].date, ctime(&now));
+
     if (matchResult == 1)
     {
         setColor(2, 0);
@@ -166,6 +174,8 @@ void showGameResult()
         printf("Você ganhou R$%.2lf. \n", moneyAmount);
         addValue(moneyAmount, 0);
         setColor(8, 0);
+
+        players[authenticatedUser].history[indHistory].result = moneyAmount;
     }
     else if (matchResult == 0)
     {
@@ -173,6 +183,8 @@ void showGameResult()
         printf("\nVocê perdeu R$%.2lf. \n", moneyBegin);
         chargeValue(moneyBegin, authenticatedUser);
         setColor(8, 0);
+
+        players[authenticatedUser].history[indHistory].result = moneyBegin * -1;
     }
 
     int x = 1;

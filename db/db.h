@@ -4,7 +4,6 @@
 #include "../structs.h"
 
 player players[14];
-match matches[4];
 
 extern int authenticatedUser;
 extern int contPlayers;
