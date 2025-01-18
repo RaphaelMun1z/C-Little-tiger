@@ -27,7 +27,7 @@ player *authUser(char email[50], char pass[50])
 void login()
 {
     char l_email[50], l_pass[50];
-    printf("========================| LOGIN |========================\n");
+    printf("∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎ LOGIN ∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎\n");
     printf("Informe seu e-mail: ");
     fflush(stdout);
     scanf("%s", &l_email);
@@ -82,7 +82,7 @@ int validName(char name[], int length)
 void registerPlayer()
 {
     char name[50];
-    printf("========================| REGISTRO |========================\n");
+    printf("∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎ REGISTRO ∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎\n");
     getc(stdin);
     do
     {
@@ -171,7 +171,7 @@ void registerPlayer()
         players[contPlayers].accessLevel = 0;
 
     setColor(10, 0);
-    printf("\n✅ Conta registrada com sucesso! Seja bem-vindo(a) %s.\n\n", players[contPlayers].name);
+    printf("\n✅ Conta registrada com sucesso!\n👋😀 Seja bem-vindo(a) %s.\n\n", players[contPlayers].name);
     setColor(7, 0);
     contPlayers++;
 }
