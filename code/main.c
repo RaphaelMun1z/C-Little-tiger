@@ -1,6 +1,3 @@
-#ifdef _WIN32
-    #include <windows.h>
-#endif
 #include <stdio.h>
 #include <string.h>
 
@@ -13,11 +10,27 @@
 #include "games/blaze/blaze.h"
 #include "games/roulette/roulette.h"
 
-void setColor(int textColor, int backgroundColor)
-{
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, textColor + (backgroundColor * 16));
-}
+#ifdef _WIN32
+    #include <windows.h>
+    void setColor(int textColor, int backgroundColor){
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(hConsole, textColor + (backgroundColor * 16));
+    }
+#else
+    void setColor(int textColor, int backgroundColor) {
+        // Ajuste para mapeamento ANSI
+        const char *colorCodes[] = {
+            "30", "34", "32", "36", "31", "35", "33", "37" // Preto, Azul, Verde, Ciano, Vermelho, Magenta, Amarelo, Branco
+        };
+        const char *bgColorCodes[] = {
+            "40", "44", "42", "46", "41", "45", "43", "47" // Fundo: Preto, Azul, Verde, Ciano, Vermelho, Magenta, Amarelo, Branco
+        };
+
+        if (textColor >= 0 && textColor < 8 && backgroundColor >= 0 && backgroundColor < 8) {
+            printf("\033[%s;%sm", colorCodes[textColor], bgColorCodes[backgroundColor]);
+        }
+    }
+#endif
 
 void withdrawMoney();
 void deleteUser();

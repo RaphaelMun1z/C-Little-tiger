@@ -1,4 +1,12 @@
-#include <windows.h>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+    void Sleep(int milliseconds) {
+        usleep(milliseconds * 1000);
+    }
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,6 +25,14 @@ int colorSelected;
 void setColor(int textColor, int backgroundColor);
 void addValue(double value, int playerCode);
 void chargeValue(double value, int playerCode);
+
+void clearConsole() {
+    #ifdef _WIN32
+        system("cls"); 
+    #else
+        system("clear");
+    #endif
+}
 
 void BlazeCleanMap()
 {
@@ -177,7 +193,7 @@ void BlazeGenSelect(double money, char color)
 
     for (int ii = 1; ii < value; ii++)
     {
-        system("cls");
+        clearConsole();
         BlazeSetArrowPos(ii);
         BlazeShowMap();
         Sleep(1);
