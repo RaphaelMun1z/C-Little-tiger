@@ -1,7 +1,8 @@
 services:
   c-dev:
     image: gcc:9.2.0
-    container_name: little-tiger
+    container_name: little-tiger-app
+    stdin_open: true
     volumes:
       - ./code:/code
     tty: true
