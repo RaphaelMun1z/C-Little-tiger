@@ -1,0 +1,7 @@
+services:
+  c-dev:
+    image: gcc:9.2.0
+    container_name: little-tiger
+    volumes:
+      - ./code:/code
+    tty: true
